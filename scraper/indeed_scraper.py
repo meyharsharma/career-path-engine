@@ -57,12 +57,12 @@ def scrape_job_details(driver) -> Dict[str, Any]:
 
 
 def scrape_indeed(
-    driver: webdriver.Chrome, query: str, location: str, pages: int = 1
-) -> List[Dict[str, Any]]:
+    driver: webdriver.Chrome, query: str, location: str, start_page: int = 1, end_page: int = 2,
+    ) -> List[Dict[str, Any]]:
     results: List[Dict[str, Any]] = []
 
-    for page in range(pages):
-        start = page * 10
+    for page in range(start_page, end_page + 1):
+        start = (page - 1) * 10
         search_url = f"{BASE_URL}/jobs?q={query.replace(' ', '+')}&l={location}&start={start}"
 
         print(f"\n[INFO] Fetching page {page + 1}: {search_url}")
@@ -149,7 +149,7 @@ if __name__ == "__main__":
     print("[INFO] Launching browser...")
     driver = get_driver()
 
-    query = "software engineer"
+    query = "data scientist"
     location = "United States"
 
     try:
@@ -164,9 +164,9 @@ if __name__ == "__main__":
         input("Press ENTER once job cards are visible → ")
 
         print("[INFO] Starting scraping...")
-        jobs = scrape_indeed(driver, query, location, pages=10)
+        jobs = scrape_indeed(driver, query, location, start_page=1, end_page=7)
 
-        out_file = DATA_DIR / "indeed_sde_1127.jsonl"
+        out_file = DATA_DIR / "indeed_data_science_1210.jsonl"
         save_jsonl(jobs, out_file)
         print(f"[SUCCESS] Saved {len(jobs)} jobs to {out_file}")
 
